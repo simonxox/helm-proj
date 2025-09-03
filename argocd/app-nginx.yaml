@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/simonxox/helm-proj.git
+    targetRevision: main
+    path: .
+    helm:
+      parameters:
+        - name: replicaCount
+          value: "3"
+        - name: image.repository
+          value: nginx
+        - name: image.tag
+          value: "1.26.0"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
